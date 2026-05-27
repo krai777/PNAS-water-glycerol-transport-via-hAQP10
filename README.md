@@ -9,6 +9,7 @@ The script is designed to quantify molecular permeation across a membrane/channe
 - sodium ions (`SOD`)
 - chloride ions (`CLA`)
 - glycerol molecules (`MGLY`, atom name `C2`)
+  
 You can change according to your system specifications.
 The output can be used to calculate net permeation events, cumulative transport, for molecular dynamics analysis.
 
