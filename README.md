@@ -14,7 +14,7 @@ You can change according to your system specifications.
 The output can be used to calculate net permeation events, cumulative transport, for molecular dynamics analysis.
 
 ## Preprocessing requirement
-Before using this script, the input structure must be prepared with appropriate segment names that identify molecules initially located on the upper and lower sides of the system.
+Before using this script, the input structure must be prepared with appropriate segment names that identify molecules initially located on the upper leaflet side and lower leaflet side of the system.
 In particular, the PDB/PSF files must contain segment names such as:
 
 - `WATUP` and `WATDOWN` for water
