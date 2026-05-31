@@ -49,9 +49,9 @@ python permeation_tracker.py
 
 | Parameter | Default | Description |
 |---|---|---|
-| `cylinder_radius` | `8.0` Å | Radial cutoff defining the cylindrical pore |
-| `z_min` | `-18.0` Å | Lower z boundary relative to chain center of mass |
-| `z_max` | `18.0` Å | Upper z boundary relative to chain center of mass |
+| `cylinder_radius` |  Radial cutoff defining the cylindrical pore |
+| `z_min` |  Lower z boundary relative to chain center of mass |
+| `z_max` |  Upper z boundary relative to chain center of mass |
 
 ## Output Files
 
