@@ -1,10 +1,10 @@
 ########################################################
-#### NAMD config file for simulating a box of water ####
+#### NAMD config file  ####
 ########################################################
 
 ## USER VARIABLES
 set sys lipid_aqp_wi
-set outPrefix  output/npt6
+set outPrefix  output/npt
 set temperature  300
 
 
@@ -12,12 +12,7 @@ set temperature  300
 #### OUTPUT ####
 ################
 outputName    $outPrefix ;# this tells namd where to write output files
-if {1} {
-set inputname      output/npt5
-binCoordinates     $inputname.restart.coor
-binVelocities      $inputname.restart.vel  ;# remove the "temperature" entry if you use this!
-extendedSystem     $inputname.restart.xsc
-}
+
 ## number of steps between output writes
 dcdfreq             	9600 ;# simulation trajectory
 restartfreq             9600 ;# for restarting a simulation
@@ -39,12 +34,12 @@ proc get_first_ts { xscfile } {
   close $fd
   return $ts
 }
-set firsttime [get_first_ts $inputname.restart.xsc]
-#set firsttime 0
+#set firsttime [get_first_ts $inputname.restart.xsc]
+set firsttime 0
 firstTimeStep         $firsttime ;# only affects dynamics for SMD simulations
 
 ## instead of restart files
-if {0} {
+if {1} {
 temperature $temperature ;# must invoke this cmd or "binvelocities file.vel"
 cellBasisVector1 125  0 0  ;# specify size of system or "extsystem file.xsc"
 cellBasisVector2 0 125 0  ;# NOTE: usually these should be about 1.5 Å smaller
@@ -60,18 +55,7 @@ cellOrigin       0 0 0
 #### THERMODYNAMIC ENSEMBLE ####
 ################################
 
-## temperature control with Lowe-Andersen thermostat
-#loweAndersen        on
-#loweAndersenTemp    $temperature
-#loweAndersenRate      50
-#loweAndersenCutoff    2.7
 
-if {0} {
-langevin            on    ;# do langevin dynamics
-langevinDamping     0.5   ;# damping coefficient (gamma); let's try 0.5 /ps
-langevinTemp        $temperature
-langevinHydrogen    off    ;# don't couple langevin bath to hydrogens
-}
 # Constant Temperature Control
 if {1} {
  langevin                        on
@@ -136,9 +120,7 @@ parameters charmm36.nbfix/par_all36_lipid.prm
 parameters charmm36.nbfix/par_all36_carb.prm
 parameters charmm36.nbfix/par_all36_cgenff.prm
 parameters charmm36.nbfix/toppar_water_ions_cufix.str
-foreach S { BNG GOL} {
-parameters charmm36.nbfix/${S}.str
-}
+
 
 #### MISC ####
 ##############
@@ -153,36 +135,7 @@ parameters charmm36.nbfix/${S}.str
 #### EXTERNAL FORCES ####
 #########################
 
-## moving harmonic constraints and SMD
-# {4 7 2}
-#set axis {460 575 300} ;# depends on system (ssb35 vs ssb65)
-#set axisLength [veclength $axis]
-#set axis [vecscale [expr {1./$axisLength}] $axis] ;# axis is now normalized
-## moving constraints on bottom terminal nucleotride
-#constraints on
-#consRef    constrained_dna.pdb
-#consKFile  constrained_dna.pdb
-#consKCol B
-#constraintScaling 500 ;# k = 1000 : constraints uses U(x) = -k(x-x0)^2
-## SMD on terminal nucleotide on top
-#SMD           on
-#SMDk          1000
-#SMDk2         1000 ;# restrain in plane normal to SmdDir
-#SMDfile       ssb.pdb
-#SMDOutputFreq 48
-#SMDVel 0
-#SMDDir $axis
-if {0} {
-extraBonds on
-extraBondsFile dna_chl_wations_mghh_extrabonds
-}
-if {0} {
-set waterCheckFreq              100
-set lipidCheckFreq              100
-set allatompdb                  lipid_LIC_wat_ions.pdb
-tclForces                       on
-tclForcesScript                 keep_water_out.tcl
-}
+
 #############
 #### RUN ####
 #############
@@ -191,20 +144,19 @@ tclForcesScript                 keep_water_out.tcl
 ## after minimization, there will be 0 kinetic energy, and all potentials are at a local minimum
 ## this loop injects energy into the system ten times to quickly bring the temperature up to $temperature
 
-if {0} {
+if {1} {
 constraints                     on
 consKCol                        B
 constraintScaling	        1
 consRef                         ${sys}_restrain.pdb
 consKFile                       ${sys}_restrain.pdb
 }
-if {0} {
+if {1} {
 minimize 1200 ;# remove clashes from introduced during system assembly
 for {set i 0} {$i < 4} {incr i} { 
     run 480
     reinitvels $temperature
 }
 }
-#colvars              on
-#colvarsConfig      rmsd.in
+
 run 96000000 ;# simulate for a while (must be mutliple of stepsPerCycle)
